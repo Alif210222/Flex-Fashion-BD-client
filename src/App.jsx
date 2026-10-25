@@ -14,6 +14,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminLayout from "./components/admin/adminLayout";
 import ProductManagement from "./components/admin/ProductManagement";
 import ProductEditor from "./components/admin/Product-add-edit";
+import Products from "./pages/Products";
+import MainLayout from "./components/layout/MainLayout";
+
 
 function AdminDashboard() {
   return (
@@ -32,9 +35,17 @@ function AdminDashboard() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/products" element={<Products />} /> */}
+      
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
 
        <Route
         path="/admin"
@@ -55,6 +66,9 @@ export default function App() {
           element={<ProductEditor />}
         />
       </Route>
+      
+
+      
 
       {/* Keep your other existing routes here. */}
     </Routes>

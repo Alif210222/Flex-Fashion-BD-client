@@ -9,7 +9,9 @@ const formatPrice = (price) =>
     maximumFractionDigits: 0,
   }).format(Number(price) || 0);
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product = {} }) {
+
+  console.log( product )
   const image = product.images?.[0]?.url;
   const productName = product.name || product.title || "Untitled product";
   const productUrl = product.slug

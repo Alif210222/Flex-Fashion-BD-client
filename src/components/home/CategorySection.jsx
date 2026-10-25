@@ -7,25 +7,25 @@ const categories = [
     name: "T-Shirts",
     description: "Everyday essentials",
     href: "/products?category=t-shirts",
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=85",
+    // image:
+    //   "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=85",
   },
   {
     name: "Hoodies",
     description: "Relaxed comfort",
     href: "/products?category=hoodies",
-    image:
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=85",
+    // image:
+    //   "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=85",
   },
   {
     name: "Drop Shoulder",
     description: "Relaxed silhouettes",
     href: "/products?category=t-shirts&subcategory=drop-shoulder",
-    image:
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=800&q=85",
+    // image:
+    //   "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=800&q=85",
   },
   {
-    name: "Fabrics",
+    name: "Zackets",
     description: "Quality materials",
     href: "/products?category=fabrics",
     image:
@@ -46,17 +46,15 @@ export default function CategorySection() {
           className="mb-7 flex items-end justify-between gap-4 sm:mb-9"
         >
           <div>
-            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-[#817665] sm:text-xs">
+            {/* <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-[#817665] sm:text-xs">
               Find your style
             </p>
 
             <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">
-              Shop by category
-            </h2>
+              Types Of Products
+            </h2> */}
 
-            <p className="mt-2 text-sm text-[#777064]">
-              Everyday essentials, made simple.
-            </p>
+            
           </div>
 
           <a
@@ -67,6 +65,8 @@ export default function CategorySection() {
             <ArrowUpRight size={14} />
           </a>
         </motion.div>
+
+
 
         {/* Category grid */}
         <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:gap-x-6 sm:gap-y-9 lg:grid-cols-4 lg:gap-6">
@@ -83,21 +83,19 @@ export default function CategorySection() {
               }}
               className="group min-w-0"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-[#E8E0D3]">
-                <img
+              <div >
+                {/* <img
                   src={category.image}
                   alt={category.name}
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                />
+                /> */}
 
-                <span className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F3EB] text-[#292821] transition-colors duration-300 group-hover:bg-[#292821] group-hover:text-[#F7F3EB] sm:bottom-4 sm:right-4">
-                  <ArrowUpRight size={17} />
-                </span>
+               
               </div>
 
               <div className="flex items-start justify-between gap-2 pt-3">
-                <div>
+                <div class = "border  p-4 bg-[#EDE5D9]">
                   <h3 className="text-sm font-medium sm:text-base">
                     {category.name}
                   </h3>

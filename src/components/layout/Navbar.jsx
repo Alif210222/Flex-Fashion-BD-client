@@ -22,7 +22,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 
 const navigation = [
-  { label: "New Arrivals", href: "/products?sort=newest" },
+  { label: "Products", href: "/products?sort=newest" },
   { label: "T-Shirts", href: "/products?category=t-shirts" },
   { label: "Hoodies", href: "/products?category=hoodies" },
   { label: "Fabrics", href: "/products?category=fabrics" },

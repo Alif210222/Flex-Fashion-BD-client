@@ -11,14 +11,14 @@ export default function Home() {
   return (
       <main className="min-h-screen bg-[#F7F3EB]">
       <AnnouncementBar />
-      <Navbar />
+      {/* <Navbar /> */}
       <HeroSection />
       <CategorySection />
       
        <FeaturedProducts /> 
 
       <CollectionSection />
-      <Footer /> 
+      {/* <Footer />  */}
     </main>
   );
 }

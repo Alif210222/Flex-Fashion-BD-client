@@ -16,6 +16,7 @@ async function fetchFeaturedProducts() {
   });
 
   const body = response.data;
+  console.log(body)
 
   // Supports common API response formats.
   const products =
@@ -127,7 +128,7 @@ export default function FeaturedProducts() {
                   delay: (index % 4) * 0.06,
                 }}
               >
-              <ProductCard></ProductCard>
+              <ProductCard product= {product}></ProductCard>
               </motion.div>
             ))}
           </div>
