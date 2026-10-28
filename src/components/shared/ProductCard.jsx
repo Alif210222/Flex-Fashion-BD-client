@@ -14,13 +14,13 @@ export default function ProductCard({ product = {} }) {
   console.log( product )
   const image = product.images?.[0]?.url;
   const productName = product.name || product.title || "Untitled product";
-  const productUrl = product.slug
+  const productUrl = product.slug // producturl decleared but this value not read.
     ? `/products/${product.slug}`
     : "/products";
 
   return (
     <article className="group min-w-0">
-      <Link to={productUrl} className="block">
+      <Link to={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-[#E8E0D3]">
           {image ? (
             <img
@@ -48,10 +48,10 @@ export default function ProductCard({ product = {} }) {
           </p>
 
           <Link
-            to={productUrl}
+            to={`/products/${product.slug}`}
             className="line-clamp-2 text-sm font-medium text-[#292821] transition-colors hover:text-[#817665] sm:text-base"
           >
-            {productName}
+           {product.name}
           </Link>
         </div>
 

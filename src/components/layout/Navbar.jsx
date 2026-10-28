@@ -73,7 +73,7 @@ export default function Navbar() {
         },
         {
           label: "Order List",
-          href: "/orders",
+          href: "/my-orders",
           icon: ClipboardList,
         },
         {

@@ -16,6 +16,9 @@ import ProductManagement from "./components/admin/ProductManagement";
 import ProductEditor from "./components/admin/Product-add-edit";
 import Products from "./pages/Products";
 import MainLayout from "./components/layout/MainLayout";
+import ProductDetails from "./pages/ProductDetails";
+import Checkout from "./pages/Checkout";
+import MyOrders from "./pages/MyOrders";
 
 
 function AdminDashboard() {
@@ -45,6 +48,9 @@ export default function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/products/:slug" element={<ProductDetails />}/>
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/my-orders" element={<MyOrders />} />
       </Route>
 
        <Route
