@@ -59,7 +59,7 @@ const getOrderTotal = (order) =>
   0;
 
 const getStatus = (order) =>
-  String(order?.status ?? "pending").toLowerCase();
+  String(order?.orderStatus  ?? "pending").toLowerCase();
 
 const statusStyles = {
   pending: "bg-[#f5eddb] text-[#85692d]",
@@ -98,6 +98,8 @@ const MyOrders = () => {
       return list;
     },
   });
+
+  console.log(orders);
 
   const handleCancel = async (orderId) => {
     const confirmed = window.confirm(
@@ -252,7 +254,7 @@ const MyOrders = () => {
 
                     <span
                       className={`rounded-full px-3 py-1.5 text-xs font-medium capitalize ${
-                        statusStyles[status] ?? statusStyles.pending
+                      getStatus ?? statusStyles.pending
                       }`}
                     >
                       {status}

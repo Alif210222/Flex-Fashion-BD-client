@@ -14,7 +14,7 @@ import {
 const menuItems = [
   {
     label: "Overview",
-    path: "/admin",
+    path: "/admin/overview",
     icon: LayoutDashboard,
     end: true,
   },
@@ -115,7 +115,7 @@ export default function AdminSidebar({ open, onClose }) {
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-xl px-3 py-3 text-sm transition ${
                       isActive
-                        ? "bg-[#292821] font-medium text-[#f7f3eb]"
+                        ? "bg-[#5d5d5a] font-medium text-[#f7f3eb]"
                         : "text-[#625d52] hover:bg-[#e8e0d3]"
                     }`
                   }

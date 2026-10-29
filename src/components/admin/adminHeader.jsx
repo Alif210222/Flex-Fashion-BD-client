@@ -1,4 +1,4 @@
-import { Menu, Bell, ExternalLink } from "lucide-react";
+import { Menu,  ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -36,14 +36,14 @@ export default function AdminHeader({ onMenuClick }) {
           <ExternalLink size={19} />
         </Link>
 
-        <button
+        {/* <button
           type="button"
           aria-label="Notifications"
           title="Notifications"
           className="rounded-full p-2 text-[#817665] transition hover:bg-[#e8e0d3] hover:text-[#292821]"
         >
           <Bell size={19} />
-        </button>
+        </button> */}
 
         <div className="flex items-center gap-3 border-l border-[#e8e0d3] pl-3 sm:pl-5">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#292821] text-sm font-semibold uppercase text-[#f7f3eb]">

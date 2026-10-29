@@ -117,7 +117,7 @@ export default function ProductManagement() {
 
         <Link
           to="/admin/products/new"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#292821] px-5 py-3 text-sm font-medium text-[#f7f3eb] transition hover:bg-[#454338]"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#5b5b56] px-5 py-3 text-sm font-medium text-[#f7f3eb] transition hover:bg-[#454338]"
         >
           <Plus size={18} />
           Add product

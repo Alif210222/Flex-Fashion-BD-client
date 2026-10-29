@@ -19,6 +19,8 @@ import MainLayout from "./components/layout/MainLayout";
 import ProductDetails from "./pages/ProductDetails";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
+import AdminOrders from "./components/admin/AdminOrders";
+import AdminOverview from "./components/admin/AdminOverview";
 
 
 function AdminDashboard() {
@@ -71,6 +73,8 @@ export default function App() {
           path="products/:id/edit"
           element={<ProductEditor />}
         />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/overview" element={<AdminOverview />} />
       </Route>
       
 
