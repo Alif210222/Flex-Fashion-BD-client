@@ -17,10 +17,14 @@ import ProductEditor from "./components/admin/Product-add-edit";
 import Products from "./pages/Products";
 import MainLayout from "./components/layout/MainLayout";
 import ProductDetails from "./pages/ProductDetails";
-import Checkout from "./pages/Checkout";
+//import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
 import AdminOrders from "./components/admin/AdminOrders";
 import AdminOverview from "./components/admin/AdminOverview";
+import Cart from "./pages/Cart";
+import Checkout2 from "./pages/Checkout2";
+import WhatsAppButton from "./components/shared/WhatsappButton";
+
 
 
 function AdminDashboard() {
@@ -39,6 +43,7 @@ function AdminDashboard() {
 
 export default function App() {
   return (
+    <> 
     <Routes>
       {/* <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
@@ -51,8 +56,11 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/products/:slug" element={<ProductDetails />}/>
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout" element={<Checkout2 />} />
         <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/cart" element={<Cart />} />
+
+        
       </Route>
 
        <Route
@@ -76,12 +84,11 @@ export default function App() {
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/overview" element={<AdminOverview />} />
       </Route>
-      
-
-      
-
       {/* Keep your other existing routes here. */}
     </Routes>
+
+      <WhatsAppButton></WhatsAppButton>
+    </>
   );
 }
 

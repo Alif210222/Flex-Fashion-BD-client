@@ -1,11 +1,12 @@
 
 import HeroSection from "@/components/home/Herosection";
 import AnnouncementBar from "../components/layout/AnnouncementBar";
-import Navbar from "../components/layout/Navbar";
+//import Navbar from "../components/layout/Navbar";
 import CategorySection from "@/components/home/CategorySection";
  import FeaturedProducts from "@/components/home/FeaturedSection";
 import CollectionSection from "@/components/home/CollectionSection";
-import Footer from "@/components/layout/Footer";
+//import Footer from "@/components/layout/Footer";
+import FAQSection from "@/components/home/FAQsection";
 
 export default function Home() {
   return (
@@ -16,6 +17,8 @@ export default function Home() {
       <CategorySection />
       
        <FeaturedProducts /> 
+
+         <FAQSection />
 
       <CollectionSection />
       {/* <Footer />  */}

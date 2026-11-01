@@ -16,7 +16,7 @@ async function fetchFeaturedProducts() {
   });
 
   const body = response.data;
-  console.log(body)
+  //console.log(body)
 
   // Supports common API response formats.
   const products =

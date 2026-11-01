@@ -9,6 +9,7 @@ import {
   Plus,
   Trash2,
   X,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import api from "../../services/api";
@@ -22,12 +23,19 @@ const categories = [
   "others",
 ];
 
-const emptyVariant = {
-  sku: "",
-  size: "M",
-  color: "",
-  colorHex: "#292821",
-  stock: 0,
+const availableSizes = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
+
+// const emptyVariant = {
+//   sku: "",
+//   size: "M",
+//   color: "",
+//   colorHex: "#292821",
+//   stock: 0,
+// };
+
+const emptyColor = {
+  name: "",
+  hex: "#292821",
 };
 
 function unwrap(response) {
@@ -73,7 +81,15 @@ export default function ProductEditor() {
     careText: "",
   });
 
-  const [variants, setVariants] = useState([{ ...emptyVariant }]);
+  // Selected size and color options
+  const [selectedSizes, setSelectedSizes] = useState(["M"]);
+  const [selectedColors, setSelectedColors] = useState([
+    { name: "Black", hex: "#292821" },
+  ]);
+
+  // Generated size + color combinations
+  const [variants, setVariants] = useState([]);
+
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -87,6 +103,7 @@ export default function ProductEditor() {
     },
   });
 
+  // Load existing product when editing
   useEffect(() => {
     if (!productQuery.data) return;
 
@@ -107,23 +124,44 @@ export default function ProductEditor() {
       careText: (product.careInstructions || []).join("\n"),
     });
 
-    setVariants(
-      product.variants?.length
-        ? product.variants.map((variant) => ({
-            sku: variant.sku || "",
-            size: variant.size || "M",
-            color: variant.color || "",
-            colorHex: variant.colorHex || "#292821",
-            stock: variant.stock ?? 0,
-          }))
-        : [{ ...emptyVariant }]
-    );
+    const existingVariants = (product.variants || []).map((variant) => ({
+      sku: variant.sku || "",
+      size: variant.size || "M",
+      color: variant.color || "",
+      colorHex: variant.colorHex || "#292821",
+      stock: variant.stock ?? 0,
+    }));
+
+    setVariants(existingVariants);
+
+    const sizes = [
+      ...new Set(existingVariants.map((variant) => variant.size).filter(Boolean)),
+    ];
+
+    const colors = [
+      ...new Map(
+        existingVariants
+          .filter((variant) => variant.color)
+          .map((variant) => [
+            variant.color.toLowerCase(),
+            {
+              name: variant.color,
+              hex: variant.colorHex || "#292821",
+            },
+          ])
+      ).values(),
+    ];
+
+    setSelectedSizes(sizes.length ? sizes : ["M"]);
+    setSelectedColors(colors.length ? colors : []);
 
     setExistingImages(product.images || []);
   }, [productQuery.data]);
 
+  // Image preview URLs
   useEffect(() => {
     const urls = files.map((file) => URL.createObjectURL(file));
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPreviews(urls);
 
@@ -140,12 +178,14 @@ export default function ProductEditor() {
       data.append("category", form.category);
       data.append("subcategory", form.subcategory.trim());
       data.append("price", String(Number(form.price)));
+
       data.append(
         "compareAtPrice",
         form.compareAtPrice === ""
           ? ""
           : String(Number(form.compareAtPrice))
       );
+
       data.append("isFeatured", String(form.isFeatured));
       data.append("status", form.status);
 
@@ -169,17 +209,16 @@ export default function ProductEditor() {
         )
       );
 
+      // Backend receives the same variants array structure as before.
       data.append(
         "variants",
         JSON.stringify(
-          variants
-            .filter((variant) => variant.sku.trim())
-            .map((variant) => ({
-              ...variant,
-              sku: variant.sku.trim(),
-              color: variant.color.trim(),
-              stock: Number(variant.stock),
-            }))
+          variants.map((variant) => ({
+            ...variant,
+            sku: variant.sku.trim(),
+            color: variant.color.trim(),
+            stock: Number(variant.stock),
+          }))
         )
       );
 
@@ -202,9 +241,11 @@ export default function ProductEditor() {
       queryClient.invalidateQueries({
         queryKey: ["admin-products"],
       });
+
       queryClient.invalidateQueries({
         queryKey: ["admin-product", id],
       });
+
       queryClient.invalidateQueries({
         queryKey: ["products"],
       });
@@ -240,17 +281,126 @@ export default function ProductEditor() {
     }));
   };
 
+  // Toggle size selection
+  const toggleSize = (size) => {
+    setSelectedSizes((previous) =>
+      previous.includes(size)
+        ? previous.filter((item) => item !== size)
+        : [...previous, size]
+    );
+  };
+
+  // Add another color
+  const addColor = () => {
+    setSelectedColors((previous) => [
+      ...previous,
+      { ...emptyColor },
+    ]);
+  };
+
+  // Update color name or hex
+  const updateColor = (index, field, value) => {
+    setSelectedColors((previous) =>
+      previous.map((color, i) =>
+        i === index ? { ...color, [field]: value } : color
+      )
+    );
+  };
+
+  // Remove color
+  const removeColor = (index) => {
+    setSelectedColors((previous) =>
+      previous.filter((_, i) => i !== index)
+    );
+  };
+
+  // Generate every size + color combination.
+  // Existing SKU and stock values are preserved for matching combinations.
+  const generateVariants = () => {
+    const sizes = [...new Set(selectedSizes)];
+    const colors = selectedColors
+      .filter((color) => color.name.trim())
+      .filter(
+        (color, index, array) =>
+          array.findIndex(
+            (item) =>
+              item.name.trim().toLowerCase() ===
+              color.name.trim().toLowerCase()
+          ) === index
+      );
+
+    if (!sizes.length) {
+      toast.error("Please select at least one size.");
+      return;
+    }
+
+    if (!colors.length) {
+      toast.error("Please add at least one color.");
+      return;
+    }
+
+    const oldVariants = variants;
+
+    const newVariants = colors.flatMap((color) =>
+      sizes.map((size) => {
+        const existing = oldVariants.find(
+          (variant) =>
+            variant.size === size &&
+            variant.color.trim().toLowerCase() ===
+              color.name.trim().toLowerCase()
+        );
+
+        const colorCode = color.name
+          .trim()
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "")
+          .slice(0, 5);
+
+        const productCode = form.name
+          .trim()
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "")
+          .slice(0, 5);
+
+        return {
+          sku:
+            existing?.sku ||
+            `${productCode || "FF"}-${colorCode || "COLOR"}-${size
+              .replace(/\s+/g, "")
+              .toUpperCase()}`,
+          size,
+          color: color.name.trim(),
+          colorHex: color.hex || "#292821",
+          stock: existing?.stock ?? 0,
+        };
+      })
+    );
+
+    setVariants(newVariants);
+    toast.success(`${newVariants.length} variants generated.`);
+  };
+
+  const updateVariant = (index, field, value) => {
+    setVariants((previous) =>
+      previous.map((variant, i) =>
+        i === index ? { ...variant, [field]: value } : variant
+      )
+    );
+  };
+
   const handleFiles = (event) => {
     const selected = Array.from(event.target.files || []);
     const combined = [...files, ...selected];
 
-    if (combined.length > 8) {
-      toast.error("You can upload a maximum of 8 images.");
+    if (combined.length + existingImages.length > 8) {
+      toast.error("You can have a maximum of 8 product images.");
       event.target.value = "";
       return;
     }
 
-    const tooLarge = selected.find((file) => file.size > 5 * 1024 * 1024);
+    const tooLarge = selected.find(
+      (file) => file.size > 5 * 1024 * 1024
+    );
 
     if (tooLarge) {
       toast.error("Each image must be 5 MB or smaller.");
@@ -279,14 +429,6 @@ export default function ProductEditor() {
     setFiles((previous) => previous.filter((_, i) => i !== index));
   };
 
-  const updateVariant = (index, field, value) => {
-    setVariants((previous) =>
-      previous.map((variant, i) =>
-        i === index ? { ...variant, [field]: value } : variant
-      )
-    );
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -302,21 +444,40 @@ export default function ProductEditor() {
 
     if (
       form.compareAtPrice !== "" &&
-      Number(form.compareAtPrice) < Number(form.price)
+      (!Number.isFinite(Number(form.compareAtPrice)) ||
+        Number(form.compareAtPrice) < Number(form.price))
     ) {
       toast.error("Compare-at price should be at least the selling price.");
       return;
     }
 
-    if (
-      variants.some(
-        (variant) =>
-          !variant.sku.trim() ||
-          !Number.isFinite(Number(variant.stock)) ||
-          Number(variant.stock) < 0
-      )
-    ) {
-      toast.error("Every variant needs a SKU and valid stock quantity.");
+    if (!variants.length) {
+      toast.error("Generate at least one product variant.");
+      return;
+    }
+
+    const invalidVariant = variants.some(
+      (variant) =>
+        !variant.sku.trim() ||
+        !variant.size ||
+        !variant.color.trim() ||
+        !Number.isInteger(Number(variant.stock)) ||
+        Number(variant.stock) < 0
+    );
+
+    if (invalidVariant) {
+      toast.error(
+        "Every variant needs a SKU, size, color, and valid stock quantity."
+      );
+      return;
+    }
+
+    const skuList = variants.map((variant) =>
+      variant.sku.trim().toLowerCase()
+    );
+
+    if (new Set(skuList).size !== skuList.length) {
+      toast.error("Each variant must have a unique SKU.");
       return;
     }
 
@@ -376,9 +537,12 @@ export default function ProductEditor() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* BASIC INFORMATION */}
         <section className="space-y-5 rounded-2xl border border-[#e8e0d3] bg-white p-5 sm:p-7">
           <div>
-            <h2 className="font-semibold text-[#292821]">Basic information</h2>
+            <h2 className="font-semibold text-[#292821]">
+              Basic information
+            </h2>
             <p className="mt-1 text-sm text-[#817665]">
               Product name, URL, category, and description.
             </p>
@@ -449,6 +613,7 @@ export default function ProductEditor() {
           </Field>
         </section>
 
+        {/* PRICING */}
         <section className="space-y-5 rounded-2xl border border-[#e8e0d3] bg-white p-5 sm:p-7">
           <div>
             <h2 className="font-semibold text-[#292821]">Pricing</h2>
@@ -490,6 +655,7 @@ export default function ProductEditor() {
           </div>
         </section>
 
+        {/* PRODUCT IMAGES */}
         <section className="space-y-5 rounded-2xl border border-[#e8e0d3] bg-white p-5 sm:p-7">
           <div>
             <h2 className="font-semibold text-[#292821]">Product images</h2>
@@ -561,132 +727,232 @@ export default function ProductEditor() {
           </p>
         </section>
 
-        <section className="space-y-5 rounded-2xl border border-[#e8e0d3] bg-white p-5 sm:p-7">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="font-semibold text-[#292821]">Variants & stock</h2>
-              <p className="mt-1 text-sm text-[#817665]">
-                Configure sizes, colors, SKUs, and inventory.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setVariants((previous) => [
-                  ...previous,
-                  { ...emptyVariant },
-                ])
-              }
-              className="inline-flex items-center gap-2 rounded-lg border border-[#e8e0d3] px-3 py-2 text-sm hover:bg-[#f7f3eb]"
-            >
-              <Plus size={16} /> Add variant
-            </button>
+        {/* MULTIPLE SIZES AND COLORS */}
+        <section className="space-y-6 rounded-2xl border border-[#e8e0d3] bg-white p-5 sm:p-7">
+          <div>
+            <h2 className="font-semibold text-[#292821]">
+              Sizes, colors & stock
+            </h2>
+            <p className="mt-1 text-sm text-[#817665]">
+              Select multiple sizes and colors. The system will generate
+              individual variants for every combination.
+            </p>
           </div>
 
+          {/* SIZE SELECTOR */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-[#292821]">
+              Available sizes
+            </h3>
+
+            <div className="flex flex-wrap gap-2">
+              {availableSizes.map((size) => {
+                const active = selectedSizes.includes(size);
+
+                return (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => toggleSize(size)}
+                    className={`rounded-lg border px-4 py-2 text-sm transition ${
+                      active
+                        ? "border-[#292821] bg-[#292821] text-white"
+                        : "border-[#e8e0d3] bg-[#fbf9f5] text-[#625d52] hover:border-[#817665]"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                );
+              })}
+            </div>
+
+            <p className="text-xs text-[#817665]">
+              {selectedSizes.length} size(s) selected
+            </p>
+          </div>
+
+          <div className="border-t border-[#eee8df]" />
+
+          {/* COLOR SELECTOR */}
           <div className="space-y-4">
-            {variants.map((variant, index) => (
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-medium text-[#292821]">
+                  Available colors
+                </h3>
+                <p className="mt-1 text-xs text-[#817665]">
+                  Add each color customers can choose.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={addColor}
+                className="inline-flex items-center gap-2 rounded-lg border border-[#e8e0d3] px-3 py-2 text-sm hover:bg-[#f7f3eb]"
+              >
+                <Plus size={16} />
+                Add color
+              </button>
+            </div>
+
+            {selectedColors.map((color, index) => (
               <div
                 key={index}
-                className="grid gap-4 rounded-xl border border-[#eee8df] bg-[#fbf9f5] p-4 sm:grid-cols-2 lg:grid-cols-3"
+                className="grid gap-3 rounded-xl border border-[#eee8df] bg-[#fbf9f5] p-4 sm:grid-cols-[1fr_1fr_auto]"
               >
-                <Field label="SKU *">
-                  <input
-                    required
-                    value={variant.sku}
-                    onChange={(event) =>
-                      updateVariant(index, "sku", event.target.value)
-                    }
-                    placeholder="FF-TS-BLK-M"
-                    className={inputClass}
-                  />
-                </Field>
-
-                <Field label="Size">
-                  <select
-                    value={variant.size}
-                    onChange={(event) =>
-                      updateVariant(index, "size", event.target.value)
-                    }
-                    className={inputClass}
-                  >
-                    {["XS", "S", "M", "L", "XL", "XXL", "Free Size"].map(
-                      (size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      )
-                    )}
-                  </select>
-                </Field>
-
                 <Field label="Color name">
                   <input
-                    value={variant.color}
+                    value={color.name}
                     onChange={(event) =>
-                      updateVariant(index, "color", event.target.value)
+                      updateColor(index, "name", event.target.value)
                     }
                     placeholder="Black"
                     className={inputClass}
                   />
                 </Field>
 
-                <Field label="Color hex">
+                <Field label="Color code">
                   <div className="flex gap-2">
                     <input
                       type="color"
-                      value={variant.colorHex || "#292821"}
+                      value={/^#[0-9A-Fa-f]{6}$/.test(color.hex) ? color.hex : "#292821"}
                       onChange={(event) =>
-                        updateVariant(index, "colorHex", event.target.value)
+                        updateColor(index, "hex", event.target.value)
                       }
-                      aria-label="Choose variant color"
+                      aria-label="Choose color"
                       className="h-12 w-14 cursor-pointer rounded-lg border border-[#e8e0d3] bg-white p-1"
                     />
                     <input
-                      value={variant.colorHex}
+                      value={color.hex}
                       onChange={(event) =>
-                        updateVariant(index, "colorHex", event.target.value)
+                        updateColor(index, "hex", event.target.value)
                       }
-                      className={inputClass}
                       placeholder="#292821"
+                      className={inputClass}
                     />
                   </div>
-                </Field>
-
-                <Field label="Stock quantity">
-                  <input
-                    required
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={variant.stock}
-                    onChange={(event) =>
-                      updateVariant(index, "stock", event.target.value)
-                    }
-                    className={inputClass}
-                  />
                 </Field>
 
                 <div className="flex items-end">
                   <button
                     type="button"
-                    disabled={variants.length === 1}
-                    onClick={() =>
-                      setVariants((previous) =>
-                        previous.filter((_, i) => i !== index)
-                      )
-                    }
+                    disabled={selectedColors.length === 1}
+                    onClick={() => removeColor(index)}
                     className="inline-flex items-center gap-2 rounded-lg px-3 py-3 text-sm text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <Trash2 size={16} />
-                    Remove variant
+                    Remove
                   </button>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* GENERATE BUTTON */}
+          <div className="rounded-xl bg-[#f7f3eb] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-medium text-[#292821]">
+                  Generate variant combinations
+                </p>
+                <p className="mt-1 text-xs text-[#817665]">
+                  {selectedSizes.length} size(s) × {selectedColors.filter((color) => color.name.trim()).length} color(s)
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={generateVariants}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#292821] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#454338]"
+              >
+                <RefreshCw size={16} />
+                Generate variants
+              </button>
+            </div>
+          </div>
+
+          {/* GENERATED VARIANTS */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-[#292821]">
+                Generated variants ({variants.length})
+              </h3>
+              <p className="mt-1 text-xs text-[#817665]">
+                Set a unique SKU and stock quantity for each size-color combination.
+              </p>
+            </div>
+
+            {variants.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-[#d9d0c3] p-8 text-center">
+                <p className="text-sm text-[#817665]">
+                  No variants generated yet.
+                </p>
+                <p className="mt-1 text-xs text-[#aaa092]">
+                  Select sizes and colors, then click Generate variants.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {variants.map((variant, index) => (
+                  <div
+                    key={`${variant.color}-${variant.size}-${index}`}
+                    className="grid gap-4 rounded-xl border border-[#eee8df] bg-[#fbf9f5] p-4 sm:grid-cols-2 lg:grid-cols-4"
+                  >
+                    <div>
+                      <p className="mb-2 text-xs font-medium text-[#817665]">
+                        SIZE
+                      </p>
+                      <div className="rounded-xl border border-[#e8e0d3] bg-white px-4 py-3 text-sm font-medium text-[#292821]">
+                        {variant.size}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="mb-2 text-xs font-medium text-[#817665]">
+                        COLOR
+                      </p>
+                      <div className="flex items-center gap-2 rounded-xl border border-[#e8e0d3] bg-white px-3 py-3 text-sm text-[#292821]">
+                        <span
+                          className="h-5 w-5 rounded-full border border-black/10"
+                          style={{ backgroundColor: variant.colorHex }}
+                        />
+                        {variant.color}
+                      </div>
+                    </div>
+
+                    <Field label="SKU *">
+                      <input
+                        required
+                        value={variant.sku}
+                        onChange={(event) =>
+                          updateVariant(index, "sku", event.target.value)
+                        }
+                        placeholder="FF-BLACK-M"
+                        className={inputClass}
+                      />
+                    </Field>
+
+                    <Field label="Stock quantity *">
+                      <input
+                        required
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={variant.stock}
+                        onChange={(event) =>
+                          updateVariant(index, "stock", event.target.value)
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
 
+        {/* ADDITIONAL INFORMATION */}
         <section className="space-y-5 rounded-2xl border border-[#e8e0d3] bg-white p-5 sm:p-7">
           <h2 className="font-semibold text-[#292821]">
             Additional information
@@ -753,6 +1019,7 @@ export default function ProductEditor() {
           </div>
         </section>
 
+        {/* ACTION BUTTONS */}
         <div className="sticky bottom-3 z-20 flex flex-col-reverse justify-end gap-3 rounded-2xl border border-[#e8e0d3] bg-[#f7f3eb]/95 p-3 backdrop-blur sm:flex-row">
           <Link
             to="/admin/products"
@@ -769,6 +1036,7 @@ export default function ProductEditor() {
             {saveMutation.isPending && (
               <LoaderCircle size={17} className="animate-spin" />
             )}
+
             {saveMutation.isPending
               ? "Saving product..."
               : isEditing
@@ -780,3 +1048,5 @@ export default function ProductEditor() {
     </div>
   );
 }
+
+

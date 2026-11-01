@@ -187,6 +187,9 @@ function OrderDetailsModal({
   isUpdating,
 }) {
   const [newStatus, setNewStatus] = useState(getOrderStatus(order));
+  const [newPaymentStatus, setNewPaymentStatus] = useState(
+  order.paymentStatus ?? "unpaid"
+);
 
   if (!order) return null;
 
@@ -194,17 +197,15 @@ function OrderDetailsModal({
   const items = getItems(order);
   const status = getOrderStatus(order);
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + getItemSubtotal(item),
-    0
-  );
+  // const subtotal = items.reduce(
+  //   (sum, item) => sum + getItemSubtotal(item),
+  //   0
+  // );
 
-  const deliveryCharge = Number(
-    order.deliveryCharge ?? order.shippingCost ?? 90
-    // eslint-disable-next-line no-undef
-    
-
-  );
+  // const deliveryCharge = Number(
+  //   order.deliveryCharge ?? order.shippingCost ?? 0
+  //   // eslint-disable-next-line no-undef
+  // );
 
   const discount = Number(order.discount ?? 0);
 
@@ -378,18 +379,18 @@ function OrderDetailsModal({
                 </div>
 
                 <div className="flex justify-between gap-3">
-                  <span className="text-stone-500">Items subtotal</span>
+                  <span className="text-stone-500">Product + Delivery charge </span>
                   <span className="text-[#292821]">
-                    {formatPrice(subtotal)}
+                    {formatPrice(total)}
                   </span>
                 </div>
 
-                <div className="flex justify-between gap-3">
+                {/* <div className="flex justify-between gap-3">
                   <span className="text-stone-500">Delivery charge</span>
                   <span className="text-[#292821]">
                     {formatPrice(deliveryCharge)}
                   </span>
-                </div>
+                </div> */}
 
                 {discount > 0 && (
                   <div className="flex justify-between gap-3">
@@ -410,6 +411,34 @@ function OrderDetailsModal({
             </div>
           </div>
 
+          {/* ------------- */}
+
+{/* Payment Status */}
+<div className="mb-4">
+  <label className="mb-2 block text-sm font-medium text-[#292821]">
+    Payment Status
+  </label>
+
+  <select
+    value={newPaymentStatus}
+    onChange={(event) =>
+      setNewPaymentStatus(event.target.value)
+    }
+    disabled={isUpdating}
+    className="w-full rounded-xl border border-[#e5dccd] bg-white px-4 py-3 text-sm capitalize outline-none focus:border-[#817665]"
+  >
+    <option value="unpaid">Unpaid</option>
+    <option value="paid">Paid</option>
+    <option value="refunded">Refunded</option>
+  </select>
+
+  <p className="mt-2 text-xs text-stone-500">
+    Mark as paid only after receiving the customer's payment.
+  </p>
+</div>
+
+
+{/* // Update order status  */}
           <div className="rounded-xl border border-[#e8e0d3] p-4">
             <h3 className="font-semibold text-[#292821]">
               Update order status
@@ -444,7 +473,7 @@ function OrderDetailsModal({
                 <button
                   type="button"
                   disabled={isUpdating || newStatus === status}
-                  onClick={() => onStatusChange(order._id, newStatus)}
+                  onClick={() => onStatusChange(order._id, newStatus, newPaymentStatus)}
                   className="rounded-xl bg-[#292821] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#454338] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isUpdating ? "Saving..." : "Save status"}
@@ -500,36 +529,68 @@ export default function AdminOrders() {
     enabled: Boolean(selectedOrderId),
   });
 
+  // const statusMutation = useMutation({
+  //   mutationFn: async ({ orderId, status }) => {
+  //     return api.patch(`/orders/admin/${orderId}/status`, {
+  //       orderStatus: status,
+  //     });
+  //   },
+
+  //   onSuccess: async (_, variables) => {
+  //     toast.success("Order status updated successfully");
+
+  //     await Promise.all([
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["admin-orders"],
+  //       }),
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["admin-order-details", variables.orderId],
+  //       }),
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["my-orders"],
+  //       }),
+  //     ]);
+  //   },
+
+  //   onError: (mutationError) => {
+  //     toast.error(
+  //       mutationError?.response?.data?.message ??
+  //         "Failed to update order status"
+  //     );
+  //   },
+  // });
+
   const statusMutation = useMutation({
-    mutationFn: async ({ orderId, status }) => {
-      return api.patch(`/orders/admin/${orderId}/status`, {
-        orderStatus: status,
-      });
-    },
+  mutationFn: async ({ orderId, status, paymentStatus }) => {
+    return api.patch(`/orders/admin/${orderId}/status`, {
+      orderStatus: status,
+      paymentStatus,
+    });
+  },
 
-    onSuccess: async (_, variables) => {
-      toast.success("Order status updated successfully");
+  onSuccess: async (_, variables) => {
+    toast.success("Order and payment status updated successfully");
 
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["admin-orders"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["admin-order-details", variables.orderId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["my-orders"],
-        }),
-      ]);
-    },
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ["admin-orders"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["admin-order-details", variables.orderId],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["my-orders"],
+      }),
+    ]);
+  },
 
-    onError: (mutationError) => {
-      toast.error(
-        mutationError?.response?.data?.message ??
-          "Failed to update order status"
-      );
-    },
-  });
+  onError: (mutationError) => {
+    toast.error(
+      mutationError?.response?.data?.message ??
+        "Failed to update order"
+    );
+  },
+});
 
   const filteredOrders = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -569,14 +630,22 @@ export default function AdminOrders() {
     };
   }, [orders]);
 
-  const handleStatusChange = (orderId, status) => {
-    if (!orderId) {
-      toast.error("Order ID is missing");
-      return;
-    }
+ const handleStatusChange = (
+  orderId,
+  status,
+  paymentStatus
+) => {
+  if (!orderId) {
+    toast.error("Order ID is missing");
+    return;
+  }
 
-    statusMutation.mutate({ orderId, status });
-  };
+  statusMutation.mutate({
+    orderId,
+    status,
+    paymentStatus,
+  });
+};
 
   return (
     <main className="min-h-screen bg-[#f7f3eb] px-4 py-8 text-[#292821] sm:px-6 lg:px-10">

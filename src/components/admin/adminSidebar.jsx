@@ -4,9 +4,9 @@ import {
   LayoutDashboard,
   Package,
   ShoppingBag,
-  Users,
-  Tags,
-  Settings,
+  // Users,
+  // Tags,
+  // Settings,
   Store,
   X,
 } from "lucide-react";
@@ -28,21 +28,21 @@ const menuItems = [
     path: "/admin/orders",
     icon: ShoppingBag,
   },
-  {
-    label: "Customers",
-    path: "/admin/customers",
-    icon: Users,
-  },
-  {
-    label: "Categories",
-    path: "/admin/categories",
-    icon: Tags,
-  },
-  {
-    label: "Settings",
-    path: "/admin/settings",
-    icon: Settings,
-  },
+  // {
+  //   label: "Customers",
+  //   path: "/admin/customers",
+  //   icon: Users,
+  // },
+  // {
+  //   label: "Categories",
+  //   path: "/admin/categories",
+  //   icon: Tags,
+  // },
+  // {
+  //   label: "Settings",
+  //   path: "/admin/settings",
+  //   icon: Settings,
+  // },
 ];
 
 export default function AdminSidebar({ open, onClose }) {
@@ -69,7 +69,7 @@ export default function AdminSidebar({ open, onClose }) {
       >
         <div className="flex h-20 items-center justify-between border-b border-[#e8e0d3] px-6">
           <NavLink
-            to="/admin"
+            to="/admin/overview"
             onClick={onClose}
             className="flex items-center gap-3"
           >
@@ -79,7 +79,7 @@ export default function AdminSidebar({ open, onClose }) {
 
             <span>
               <span className="block font-semibold tracking-tight text-[#292821]">
-                FLEX FASHION
+                FLEX FASHION BD
               </span>
               <span className="text-xs text-[#817665]">
                 Admin workspace

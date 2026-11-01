@@ -11,14 +11,16 @@ import {
   Minus,
   Plus,
   ShieldCheck,
-  ShoppingBag,
+  LoaderCircle ,
   Truck,
+  ShoppingCart,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import api from "../services/api";
+import { useAddCartItem } from "@/hooks/useCart";
 
-const CART_KEY = "flex-fashion-cart";
+//const CART_KEY = "flex-fashion-cart";
 
 const formatPrice = (price) =>
   `৳${Number(price || 0).toLocaleString("en-BD")}`;
@@ -38,14 +40,14 @@ const getAvailableSizes = (variants) =>
 const getAvailableColors = (variants) =>
   [...new Set(variants.map((variant) => getVariantValue(variant, "color")).filter(Boolean))];
 
-const readCart = () => {
-  try {
-    const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
-    return Array.isArray(cart) ? cart : [];
-  } catch {
-    return [];
-  }
-};
+// const readCart = () => {
+//   try {
+//     const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+//     return Array.isArray(cart) ? cart : [];
+//   } catch {
+//     return [];
+//   }
+// };
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -72,7 +74,7 @@ const ProductDetails = () => {
         `/products/slug/${encodeURIComponent(slug)}`
       );
 
-      console.log( response)
+      
 
       const payload = response.data?.data;
       const foundProduct = payload?.product ?? payload;
@@ -99,7 +101,8 @@ const ProductDetails = () => {
   const colors = useMemo(() => getAvailableColors(variants), [variants]);
 
   useEffect(() => {
-    setActiveImage(0);
+     // eslint-disable-next-line react-hooks/set-state-in-effect
+     setActiveImage(0);
     setSelectedSize("");
     setSelectedColor("");
     setQuantity(1);
@@ -184,40 +187,71 @@ const ProductDetails = () => {
     sku: selectedVariant?.sku || product.sku || null,
   });
 
-  const addToCart = () => {
-    if (!chooseVariant()) return;
+  // const addToCart = () => {
+  //   if (!chooseVariant()) return;
 
-    const item = createCartItem();
-    const cart = readCart();
+  //   const item = createCartItem();
+  //   const cart = readCart();
 
-    const existingIndex = cart.findIndex(
-      (entry) =>
-        entry.productId === item.productId &&
-        entry.size === item.size &&
-        entry.color === item.color
-    );
+  //   const existingIndex = cart.findIndex(
+  //     (entry) =>
+  //       entry.productId === item.productId &&
+  //       entry.size === item.size &&
+  //       entry.color === item.color
+  //   );
 
-    if (existingIndex >= 0) {
-      const nextQuantity = Number(cart[existingIndex].quantity || 0) + quantity;
+  //   if (existingIndex >= 0) {
+  //     const nextQuantity = Number(cart[existingIndex].quantity || 0) + quantity;
 
-      if (hasStockField && nextQuantity > stock) {
-        toast.error(`Only ${stock} item(s) are available for this variant.`);
-        return;
-      }
+  //     if (hasStockField && nextQuantity > stock) {
+  //       toast.error(`Only ${stock} item(s) are available for this variant.`);
+  //       return;
+  //     }
 
-      cart[existingIndex] = {
-        ...cart[existingIndex],
-        quantity: nextQuantity,
-      };
-    } else {
-      cart.push(item);
-    }
+  //     cart[existingIndex] = {
+  //       ...cart[existingIndex],
+  //       quantity: nextQuantity,
+  //     };
+  //   } else {
+  //     cart.push(item);
+  //   }
 
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    window.dispatchEvent(new Event("cart-updated"));
+  //   localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  //   window.dispatchEvent(new Event("cart-updated"));
 
-    toast.success("Added to your bag.");
-  };
+  //   toast.success("Added to your bag.");
+  // };
+
+  // handle add to cart 
+
+
+const addToCartMutation = useAddCartItem();
+
+const handleAddToCart = async () => {
+  if (!sessionStorage.getItem("accessToken")) {
+    toast.error("Please log in before adding items to your cart.");
+
+    navigate("/login", {
+      state: { from: window.location.pathname },
+    });
+
+    return;
+  }
+
+  if (!product?._id || !selectedVariant?.sku) {
+    toast.error("Please select a valid product variant.");
+    return;
+  }
+
+  await addToCartMutation.mutateAsync({
+    productId: product._id,
+    variantSku: selectedVariant.sku,
+    quantity: Number(quantity) || 1,
+  });
+
+  navigate("/cart");
+};
+
 
   const orderNow = () => {
     if (!chooseVariant()) return;
@@ -515,14 +549,23 @@ const ProductDetails = () => {
 
             {/* Purchase actions */}
             <div className="grid gap-3 sm:grid-cols-2">
-              <button
-                onClick={addToCart}
-                disabled={outOfStock}
-                className="flex min-h-14 items-center justify-center gap-2 border border-[#292821] px-4 text-sm transition hover:bg-[#eee8de] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <ShoppingBag size={17} strokeWidth={1.6} />
-                Add to Cart
-              </button>
+            <button
+  onClick={handleAddToCart}
+  disabled={addToCartMutation.isPending}
+  className="flex w-full items-center justify-center gap-2
+    bg-neutral-900 px-6 py-3.5 text-sm font-medium text-white
+    transition hover:bg-neutral-700 disabled:opacity-60"
+>
+  {addToCartMutation.isPending ? (
+    <LoaderCircle size={18} className="animate-spin" />
+  ) : (
+    <ShoppingCart size={18} />
+  )}
+
+  {addToCartMutation.isPending
+    ? "Adding..."
+    : "Add to Cart"}
+</button>
 
               <button
                 onClick={orderNow}
@@ -544,6 +587,8 @@ const ProductDetails = () => {
                 This variant is currently unavailable.
               </p>
             )}
+
+<p>Whatsapp</p>
 
             <p className="mt-4 text-center text-xs leading-6 text-[#817665]">
               Secure order details · Customer support available

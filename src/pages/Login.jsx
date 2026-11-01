@@ -45,12 +45,12 @@ export default function Login() {
           : null;
 
       if (user.role === "admin") {
-        navigate(safeRequestedPath?.startsWith("/admin")
+        navigate(safeRequestedPath?.startsWith("/admin/overview")
           ? safeRequestedPath
-          : "/admin", { replace: true });
+          : "/admin/overview", { replace: true });
       } else {
         navigate(
-          safeRequestedPath && !safeRequestedPath.startsWith("/admin")
+          safeRequestedPath && !safeRequestedPath.startsWith("/admin/overview")
             ? safeRequestedPath
             : "/",
           { replace: true }

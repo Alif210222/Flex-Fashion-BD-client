@@ -8,7 +8,7 @@ import {
   Phone,
 } from "lucide-react";
 
-const FACEBOOK_URL = "https://www.facebook.com/flex-feshion-fb";
+const FACEBOOK_URL = "https://www.facebook.com/share/19zzvKu1fX/" ;
 
 const footerLinks = {
   Shop: [
@@ -19,7 +19,6 @@ const footerLinks = {
     { label: "Fabrics", to: "/products?category=fabrics" },
   ],
   Support: [
-    { label: "Contact Us", to: "/contact" },
     { label: "My Account", to: "/login" },
     { label: "Shopping Cart", to: "/cart" },
   ],
@@ -37,7 +36,7 @@ export default function Footer() {
               to="/"
               className="inline-block text-2xl font-semibold tracking-[0.16em]"
             >
-              FLEX<span className="text-[#C7B9A3]">.</span>
+              FLEX Fashion BD<span className="text-[#C7B9A3]">.</span>
             </Link>
 
             <p className="mt-4 max-w-xs text-sm leading-7 text-[#C7C0B4]">
@@ -98,7 +97,7 @@ export default function Footer() {
                 className="flex items-start gap-3 text-sm text-[#C7C0B4] transition-colors hover:text-white"
               >
                 <Mail size={16} className="mt-0.5 shrink-0" />
-                <span>support@flexfashionbd.com</span>
+                <span>aftablimon1234@gmail.com</span>
               </a>
 
               <div className="flex items-start gap-3 text-sm text-[#C7C0B4]">
@@ -113,7 +112,7 @@ export default function Footer() {
                 className="flex items-center gap-3 text-sm text-[#C7C0B4] transition-colors hover:text-white"
               >
                 <Phone size={16} />
-                <span>Contact us via Facebook</span>
+                <span>01314638760, W.P.:  01314638760  </span>
               </a>
             </div>
           </div>

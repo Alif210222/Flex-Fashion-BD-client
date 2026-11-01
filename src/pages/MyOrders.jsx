@@ -297,6 +297,8 @@ const MyOrders = () => {
                         <p className="text-xs text-[#817665]">Order total</p>
                         <p className="mt-1 text-xl font-semibold">
                           {formatPrice(getOrderTotal(order))}
+
+                          
                         </p>
                       </div>
                     </div>
@@ -382,7 +384,7 @@ const MyOrders = () => {
                                       (Number(item.quantity) || 1)
                                 )} */}
 
-                                 {formatPrice(getOrderTotal(order))}
+                                 {/* {formatPrice(getOrderTotal(order))} */}
                               </p>
                             </div>
                           );

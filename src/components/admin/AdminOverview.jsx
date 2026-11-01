@@ -1,6 +1,7 @@
 
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+//import { Link } from "react-router-dom";
 import {
   Activity,
 //   ArrowDownRight,
@@ -15,7 +16,7 @@ import {
   Truck,
   
 } from "lucide-react";
-import { Link } from "react-router-dom";
+ //import { Link } from "react-router-dom";
 import api from "../../services/api";
 
 const STATUSES = [
@@ -33,18 +34,18 @@ const money = (value) =>
     maximumFractionDigits: 2,
   })}`;
 
-const dateLabel = (date, options = {}) => {
-  if (!date) return "—";
+// const dateLabel = (date, options = {}) => {
+//   if (!date) return "—";
 
-  const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return "—";
+//   const parsed = new Date(date);
+//   if (Number.isNaN(parsed.getTime())) return "—";
 
-  return parsed.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    ...options,
-  });
-};
+//   return parsed.toLocaleDateString("en-GB", {
+//     day: "numeric",
+//     month: "short",
+//     ...options,
+//   });
+// };
 
 const orderStatus = (order) =>
   String(order?.orderStatus ?? order?.status ?? "pending").toLowerCase();
@@ -97,15 +98,15 @@ const extractProducts = (response) => {
   return [];
 };
 
-const statusColors = {
-  pending: "bg-amber-50 text-amber-800",
-  confirmed: "bg-blue-50 text-blue-800",
-  processing: "bg-violet-50 text-violet-800",
-  shipped: "bg-indigo-50 text-indigo-800",
-  delivered: "bg-emerald-50 text-emerald-800",
-  cancelled: "bg-red-50 text-red-800",
-  returned: "bg-orange-50 text-orange-800",
-};
+// const statusColors = {
+//   pending: "bg-amber-50 text-amber-800",
+//   confirmed: "bg-blue-50 text-blue-800",
+//   processing: "bg-violet-50 text-violet-800",
+//   shipped: "bg-indigo-50 text-indigo-800",
+//   delivered: "bg-emerald-50 text-emerald-800",
+//   cancelled: "bg-red-50 text-red-800",
+//   returned: "bg-orange-50 text-orange-800",
+// };
 
 function MetricCard({ title, value, description, icon: Icon }) {
   return (
@@ -417,16 +418,16 @@ export default function AdminOverview() {
     };
   }, [orders, products]);
 
-  const recentOrders = useMemo(
-    () =>
-      [...orders]
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt ?? 0) - new Date(a.createdAt ?? 0)
-        )
-        .slice(0, 6),
-    [orders]
-  );
+  // const recentOrders = useMemo(
+  //   () =>
+  //     [...orders]
+  //       .sort(
+  //         (a, b) =>
+  //           new Date(b.createdAt ?? 0) - new Date(a.createdAt ?? 0)
+  //       )
+  //       .slice(0, 6),
+  //   [orders]
+  // );
 
   const refresh = async () => {
     await Promise.all([refetchOrders(), refetchProducts()]);

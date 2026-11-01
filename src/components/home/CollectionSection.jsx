@@ -44,7 +44,7 @@ export default function CollectionSection() {
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <Link
                 to="/products?sort=newest"
-                className="inline-flex items-center gap-3 rounded-sm bg-[#292821] px-5 py-3.5 text-xs font-medium text-[#F7F3EB] transition-colors hover:bg-[#514B3F]"
+                className="inline-flex items-center gap-3 rounded-sm bg-[#929188] px-5 py-3.5 text-sm font-medium text-[#F7F3EB] transition-colors hover:bg-[#514B3F]"
               >
                 Explore collection
                 <ArrowRight size={15} />

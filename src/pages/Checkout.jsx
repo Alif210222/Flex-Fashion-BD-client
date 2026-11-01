@@ -19,6 +19,10 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   const product = location.state?.product;
+  //console.log(product);
+
+  
+
   const variant =
     location.state?.selectedVariant ?? location.state?.variant;
   const quantity = Math.max(1, Number(location.state?.quantity) || 1);
