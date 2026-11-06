@@ -45,43 +45,8 @@ export default function HeroSection() {
 
   return (
     <section className="overflow-hidden bg-[#F7F3EB] text-[#292821]">
-      <div className="mx-auto max-w-[1280px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-16">
-        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-12 lg:gap-20">
-
-          {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="order-2 md:order-1"
-          >
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#817665]">
-              Everyday essentials
-            </p>
-
-            <h1 className="max-w-md text-4xl font-medium leading-[1.12] tracking-tight sm:text-5xl lg:text-[3.8rem]">
-              Made for your
-              <br />
-              everyday.
-            </h1>
-
-            <p className="mt-5 max-w-sm text-sm leading-7 text-[#625e56]">
-              Explore comfortable T-shirts, hoodies and timeless
-              essentials for your everyday wardrobe.
-            </p>
-
-            <a
-              href="/products"
-              className="mt-7 inline-flex items-center gap-3 rounded-sm bg-[#817C70] px-6 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#625E56]"
-            >
-              Shop collection
-              <ArrowRight size={15} />
-            </a>
-
-            <p className="mt-5 text-xs text-[#817665]">
-              Simple fits. Everyday comfort.
-            </p>
-          </motion.div>
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+        <div className="grid items-center gap-8 md:grid-cols-2 md:gap-10 lg:gap-20">
 
           {/* Right Animated Product Showcase */}
           <motion.div
@@ -90,12 +55,12 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="order-1 min-w-0 md:order-2"
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between sm:mb-4">
               <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[#817665]">
                 Explore the essentials
               </p>
 
-              <span className="text-xs text-[#817665] tabular-nums">
+              <span className="text-xs tabular-nums text-[#817665]">
                 0{activeIndex + 1} / 0{products.length}
               </span>
             </div>
@@ -134,16 +99,16 @@ export default function HeroSection() {
             </div>
 
             {/* Product Information */}
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-3 flex items-center justify-between sm:mt-4">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={activeProduct.name}
+                  key={activeProduct.image}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.35 }}
                 >
-                  <h2 className="text-base font-medium">
+                  <h2 className="text-sm font-medium sm:text-base">
                     {activeProduct.name}
                   </h2>
 
@@ -156,17 +121,17 @@ export default function HeroSection() {
               <a
                 href="/products"
                 aria-label="Explore products"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D8D0C3] text-[#625E56] transition-colors hover:bg-[#292821] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D8D0C3] text-[#625E56] transition-colors hover:bg-[#292821] hover:text-white sm:h-10 sm:w-10"
               >
                 <ArrowRight size={17} />
               </a>
             </div>
 
             {/* Slider Progress Indicators */}
-            <div className="mt-5 flex gap-2">
+            <div className="mt-4 flex gap-2 sm:mt-5">
               {products.map((product, index) => (
                 <button
-                  key={product.name}
+                  key={product.image}
                   onClick={() => setActiveIndex(index)}
                   aria-label={`Show ${product.name}`}
                   className="h-[3px] flex-1 overflow-hidden bg-[#DED7CA]"
@@ -183,6 +148,42 @@ export default function HeroSection() {
               ))}
             </div>
           </motion.div>
+
+          {/* Left Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="order-2 flex flex-col items-center text-center md:order-1 md:items-start md:text-left"
+          >
+            <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-[#817665] sm:mb-4 sm:text-[11px]">
+              Everyday essentials
+            </p>
+
+            <h1 className="max-w-md text-3xl font-medium leading-[1.12] tracking-tight sm:text-5xl lg:text-[3.8rem]">
+              Made for your
+              <br />
+              everyday.
+            </h1>
+
+            <p className="mt-4 max-w-sm text-xs leading-6 text-[#625e56] sm:mt-5 sm:text-sm sm:leading-7">
+              Explore comfortable T-shirts, hoodies and timeless
+              essentials for your everyday wardrobe.
+            </p>
+
+            <a
+              href="/products"
+              className="mt-6 inline-flex items-center justify-center gap-3 rounded-sm bg-[#817C70] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#625E56] sm:mt-7 sm:py-3.5"
+            >
+              Shop collection
+              <ArrowRight size={15} />
+            </a>
+
+            <p className="mt-4 text-[11px] text-[#817665] sm:mt-5 sm:text-xs">
+              Simple fits. Everyday comfort.
+            </p>
+          </motion.div>
+
         </div>
       </div>
     </section>

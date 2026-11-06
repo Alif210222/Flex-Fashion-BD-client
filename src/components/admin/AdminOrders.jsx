@@ -53,31 +53,64 @@ const getOrderStatus = (order) =>
 const getOrderNumber = (order) =>
   order?.orderNumber ?? order?.orderNo ?? order?._id ?? "—";
 
+// const getCustomer = (order) => {
+//   const address = order?.shippingAddress ?? {};
+//   const customer = order?.customer ?? order?.user ?? {};
+
+//   return {
+//     name:
+//       address.fullName ??
+//       customer.name ??
+//       order?.customerName ??
+//       "Customer",
+//     phone:
+//       address.phone ??
+//       customer.phone ??
+//       order?.phone ??
+//       "—",
+//     address: [
+//       address.addressLine,
+//       address.area,
+//       address.district,
+//       address.division,
+//     ]
+//       .filter(Boolean)
+//       .join(", "),
+//   };
+// };
+//----
+
 const getCustomer = (order) => {
-  const address = order?.shippingAddress ?? {};
+  const shippingAddress = order?.shippingAddress ?? {};
   const customer = order?.customer ?? order?.user ?? {};
 
   return {
     name:
-      address.fullName ??
+      shippingAddress.fullName ??
       customer.name ??
       order?.customerName ??
       "Customer",
+
     phone:
-      address.phone ??
+      shippingAddress.phone ??
       customer.phone ??
       order?.phone ??
       "—",
-    address: [
-      address.addressLine,
-      address.area,
-      address.district,
-      address.division,
-    ]
-      .filter(Boolean)
-      .join(", "),
+
+    address:
+      shippingAddress.address ??
+      [
+        shippingAddress.addressLine,
+        shippingAddress.area,
+        shippingAddress.district,
+        shippingAddress.division,
+      ]
+        .filter(Boolean)
+        .join(", ") ??
+      "No delivery address available",
   };
 };
+
 
 const getItems = (order) =>
   Array.isArray(order?.items) ? order.items : [];
@@ -191,9 +224,13 @@ function OrderDetailsModal({
   order.paymentStatus ?? "unpaid"
 );
 
+//console.log(order);
+
   if (!order) return null;
 
   const customer = getCustomer(order);
+  
+  console.log(customer.name)
   const items = getItems(order);
   const status = getOrderStatus(order);
 

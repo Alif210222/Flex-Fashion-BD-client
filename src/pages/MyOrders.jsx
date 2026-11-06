@@ -403,6 +403,7 @@ const MyOrders = () => {
                             </p>
                             <p className="mt-1 text-sm leading-6 text-[#817665]">
                               {[
+                                order.shippingAddress?.address,
                                 order.shippingAddress?.addressLine,
                                 order.shippingAddress?.area,
                                 order.shippingAddress?.district,

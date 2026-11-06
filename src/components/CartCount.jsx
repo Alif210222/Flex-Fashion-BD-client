@@ -1,14 +1,14 @@
-
 import { Link } from "react-router-dom";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "../hooks/useCart";
+import { useAuth } from "../context/AuthContext";
 
 export default function CartCount() {
-  const isLoggedIn = Boolean(
-    sessionStorage.getItem("accessToken")
-  );
+  const { token } = useAuth();
+  const isLoggedIn = Boolean(token);
 
   const { data: cart } = useCart(isLoggedIn);
+
   const count = cart?.itemCount ?? 0;
 
   return (

@@ -10,6 +10,7 @@ import {
 import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
+import ScrollToTop from "./components/scrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+          <ScrollToTop></ScrollToTop>
       <AuthProvider> 
          <App />
          <Toaster position="top-right" richColors />

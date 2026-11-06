@@ -20,6 +20,7 @@ import {
   useRemoveCartItem,
   useClearCart,
 } from "../hooks/useCart";
+import { useAuth } from "@/context/AuthContext";
 
 const formatPrice = (amount) =>
   new Intl.NumberFormat("en-BD", {
@@ -41,9 +42,11 @@ function PageLoader() {
 
 export default function Cart() {
   const navigate = useNavigate();
-  const isLoggedIn = Boolean(
-    sessionStorage.getItem("accessToken")
-  );
+  // const isLoggedIn = Boolean(
+  //   sessionStorage.getItem("accessToken")
+  // );
+  const { token } = useAuth();
+const isLoggedIn = Boolean(token);
 
   const { data: cart, isLoading, isError, refetch } =
     useCart(isLoggedIn);
@@ -106,30 +109,30 @@ export default function Cart() {
     await clearMutation.mutateAsync();
   };
 
-  if (!isLoggedIn) {
-    return (
-      <main className="mx-auto flex min-h-[65vh] max-w-3xl flex-col items-center justify-center px-5 text-center">
-        <ShoppingBag size={42} strokeWidth={1.3} />
-        <h1 className="mt-5 text-2xl font-semibold text-neutral-900">
-          Your shopping cart
-        </h1>
-        <p className="mt-2 max-w-md text-sm leading-6 text-neutral-500">
-          Log in to view your cart and continue shopping.
-        </p>
+  // if (!isLoggedIn) {
+  //   return (
+  //     <main className="mx-auto flex min-h-[65vh] max-w-3xl flex-col items-center justify-center px-5 text-center">
+  //       <ShoppingBag size={42} strokeWidth={1.3} />
+  //       <h1 className="mt-5 text-2xl font-semibold text-neutral-900">
+  //         Your shopping cart
+  //       </h1>
+  //       <p className="mt-2 max-w-md text-sm leading-6 text-neutral-500">
+  //         Log in to view your cart and continue shopping.
+  //       </p>
 
-        <button
-          onClick={() =>
-            navigate("/login", {
-              state: { from: "/cart" },
-            })
-          }
-          className="mt-6 bg-neutral-900 px-7 py-3 text-sm font-medium text-white transition hover:bg-neutral-700"
-        >
-          Log in to continue
-        </button>
-      </main>
-    );
-  }
+  //       <button
+  //         onClick={() =>
+  //           navigate("/login", {
+  //             state: { from: "/cart" },
+  //           })
+  //         }
+  //         className="mt-6 bg-neutral-900 px-7 py-3 text-sm font-medium text-white transition hover:bg-neutral-700"
+  //       >
+  //         Log in to continue
+  //       </button>
+  //     </main>
+  //   );
+  // }
 
   if (isLoading) return <PageLoader />;
 

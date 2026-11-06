@@ -11,17 +11,17 @@ const formatPrice = (price) =>
 
 export default function ProductCard({ product = {} }) {
 
-  console.log( product )
+ // console.log( product )
   const image = product.images?.[0]?.url;
   const productName = product.name || product.title || "Untitled product";
-  const productUrl = product.slug // producturl decleared but this value not read.
-    ? `/products/${product.slug}`
-    : "/products";
+  // const productUrl = product.slug // producturl decleared but this value not read.
+  //   ? `/products/${product.slug}`
+  //   : "/products";
 
   return (
-    <article className="group min-w-0">
+    <article className="group min-w-0 border  pb-2 rounded-sm shadow-xl">
       <Link to={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-[#E8E0D3]">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#E8E0D3] ">
           {image ? (
             <img
               src={image}
@@ -41,7 +41,7 @@ export default function ProductCard({ product = {} }) {
         </div>
       </Link>
 
-      <div className="flex items-start justify-between gap-3 pt-3">
+      <div className="flex items-start justify-between gap-3 p-3 ">
         <div className="min-w-0">
           <p className="mb-1 text-[10px] uppercase tracking-[0.12em] text-[#817665]">
             {product.category || "Everyday essentials"}

@@ -73,7 +73,7 @@ export default function Login() {
           to="/"
           className="mb-9 block text-center text-2xl font-semibold tracking-[0.16em]"
         >
-          FLEX<span className="text-[#A99A82]">.</span>
+          FLEX Fashion BD<span className="text-[#A99A82]">.</span>
         </Link>
 
         <div className="border border-[#E3DCCE] bg-[#FBF9F4] p-6 sm:p-9">
@@ -82,7 +82,7 @@ export default function Login() {
           </p>
 
           <h1 className="mt-3 text-2xl font-medium tracking-tight">
-            Sign in to FLEX
+            Sign in 
           </h1>
 
           <p className="mt-2 text-sm leading-6 text-[#777064]">
@@ -169,19 +169,20 @@ export default function Login() {
           <Link  to="/">
           <button
          
-          className="flex w-full items-center justify-center mt-2  rounded-sm bg-[#292821] px-5 py-3.5 text-sm font-medium text-[#F7F3EB] transition hover:bg-[#514B3F] disabled:cursor-not-allowed disabled:opacity-60">
+          className="flex w-full items-center justify-center mt-2  rounded-sm bg-[#d1d1cb] px-5 py-3.5 text-sm font-medium text-[#0f0f0d] transition hover:bg-[#a19e99] disabled:cursor-not-allowed disabled:opacity-60">
               Back to home
           </button>
           </Link>
           
 
           <p className="mt-6 text-center text-sm text-[#777064]">
-            New to FLEX?{" "}
+            New to FLEX? {" "}
             <Link
               to="/register"
               className="font-medium text-[#292821] underline underline-offset-4"
             >
-              Create an account
+              <span className="text-black underline">Create an account</span>
+              
             </Link>
           </p>
         </div>

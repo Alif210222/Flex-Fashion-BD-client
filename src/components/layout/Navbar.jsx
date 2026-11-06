@@ -110,7 +110,7 @@ export default function Navbar() {
 
               <Link
                 to="/register"
-                className="rounded-sm bg-[#87867f] px-2.5 py-2.5 text-[11px] font-medium text-[#F7F3EB] transition hover:bg-[#7e7b74] sm:px-4 sm:text-sm"
+                className="rounded-sm bg-[#c1c0b8] px-2.5 py-2.5 text-[11px] font-medium text-[#F7F3EB] transition hover:bg-[#7e7b74] sm:px-4 sm:text-sm"
               >
                 Register
               </Link>

@@ -75,7 +75,7 @@ export default function Register() {
           to="/"
           className="mb-9 block text-center text-2xl font-semibold tracking-[0.16em]"
         >
-          FLEX<span className="text-[#A99A82]">.</span>
+          FLEX Fashion BD<span className="text-[#A99A82]">.</span>
         </Link>
 
         <div className="border border-[#E3DCCE] bg-[#FBF9F4] p-6 sm:p-9">
@@ -207,18 +207,19 @@ export default function Register() {
 
            <Link  to="/">
           <button
-           className="flex w-full items-center justify-center mt-2  rounded-sm bg-[#292821] px-5 py-3.5 text-sm font-medium text-[#F7F3EB] transition hover:bg-[#514B3F] disabled:cursor-not-allowed disabled:opacity-60">
+           className="flex w-full items-center justify-center mt-2 border  rounded-sm bg-[#cdcdc8] px-5 py-3.5 text-sm font-medium text-[#0c0c0b] transition hover:bg-[#93918c] disabled:cursor-not-allowed disabled:opacity-60">
               Back to home
           </button>
           </Link>
 
-          <p className="mt-6 text-center text-sm text-[#777064]">
+          <p className="mt-6 text-center  text-sm text-[#7b7771] ">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="font-medium text-[#292821] underline underline-offset-4"
+              className="font-medium  underline  "
             >
-              Sign in
+              <span className="text-black underline"> Sign in</span>
+              
             </Link>
           </p>
         </div>

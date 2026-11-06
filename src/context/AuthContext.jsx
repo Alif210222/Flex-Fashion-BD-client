@@ -5,14 +5,18 @@ import {
   useContext,
   useState,
 } from "react";
+
 import api from "../services/api";
+import { clearGuestCart } from "../utils/guestCart";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      return JSON.parse(sessionStorage.getItem("authUser") || "null");
+      return JSON.parse(
+        sessionStorage.getItem("authUser") || "null"
+      );
     } catch {
       return null;
     }
@@ -23,12 +27,15 @@ export function AuthProvider({ children }) {
   );
 
   const saveSession = useCallback((accessToken, currentUser) => {
-    sessionStorage.setItem("accessToken", accessToken);
-    sessionStorage.setItem("authUser", JSON.stringify(currentUser));
+  sessionStorage.setItem("accessToken", accessToken);
+  sessionStorage.setItem("authUser", JSON.stringify(currentUser));
 
-    setToken(accessToken);
-    setUser(currentUser);
-  }, []);
+  // Do not merge guest cart into the authenticated cart.
+  clearGuestCart();
+
+  setToken(accessToken);
+  setUser(currentUser);
+}, []);
 
   const login = useCallback(async (credentials) => {
     const response = await api.post("/auth/login", credentials);
@@ -39,23 +46,41 @@ export function AuthProvider({ children }) {
     }
 
     saveSession(data.accessToken, data.user);
+
     return data.user;
   }, [saveSession]);
 
   const register = useCallback(async (details) => {
-    await api.post("/auth/register", details);
-  }, []);
+    const response = await api.post("/auth/register", details);
+    const data = response.data?.data;
+
+    if (!data?.accessToken || !data?.user) {
+      throw new Error("Unexpected registration response from server.");
+    }
+
+    saveSession(data.accessToken, data.user);
+
+    return data.user;
+  }, [saveSession]);
 
   const logout = useCallback(() => {
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("authUser");
+
     setToken("");
     setUser(null);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, register, logout, saveSession }}
+      value={{
+        user,
+        token,
+        login,
+        register,
+        logout,
+        saveSession,
+      }}
     >
       {children}
     </AuthContext.Provider>
