@@ -224,7 +224,7 @@ export default function Navbar() {
           ))}
 
           {!isLoggedIn ? (
-            <div className="flex gap-3 py-4">
+            <div className="flex gap-3 py-4 hidden">
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
@@ -236,7 +236,7 @@ export default function Navbar() {
               <Link
                 to="/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 rounded-sm bg-[#292821] py-3 text-center text-sm font-medium text-[#F7F3EB]"
+                className="flex-1 rounded-sm bg-[#9f9e99] py-3 text-center text-sm font-medium text-[#F7F3EB]"
               >
                 Register
               </Link>

@@ -347,8 +347,15 @@ export default function AdminOverview() {
     isFetching: productsFetching,
   } = useQuery({
     queryKey: ["admin-overview-products"],
-    queryFn: async () => {
-      const response = await api.get("/products");
+    queryFn: async (params = {}) => {
+      const response = await api.get("/products",{
+         
+        params :{
+          ...params,
+          limit : 60,
+        }
+      
+      });
       return extractProducts(response);
     },
   });

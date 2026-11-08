@@ -45,8 +45,13 @@ export default function ProductManagement() {
     refetch,
   } = useQuery({
     queryKey: ["admin-products"],
-    queryFn: async () => {
-      const response = await api.get("/products/admin/all");
+    queryFn: async (params = {}) => {
+      const response = await api.get("/products/admin/all", {
+        params :{
+          ...params,
+          limit : 60,
+        }
+      });
       return getProducts(response);
     },
   });

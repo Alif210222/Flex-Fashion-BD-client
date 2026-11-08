@@ -173,7 +173,7 @@ export default function HeroSection() {
 
             <a
               href="/products"
-              className="mt-6 inline-flex items-center justify-center gap-3 rounded-sm bg-[#817C70] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#625E56] sm:mt-7 sm:py-3.5"
+              className="mt-6 inline-flex items-center justify-center gap-3 rounded-sm bg-[#9f998d] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#625E56] sm:mt-7 sm:py-3.5"
             >
               Shop collection
               <ArrowRight size={15} />
