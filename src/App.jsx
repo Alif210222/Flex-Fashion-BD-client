@@ -24,6 +24,7 @@ import AdminOverview from "./components/admin/AdminOverview";
 import Cart from "./pages/Cart";
 import Checkout2 from "./pages/Checkout2";
 import WhatsAppButton from "./components/shared/WhatsappButton";
+import useMetaPixel from "./hooks/useMetaPixel";
 
 
 
@@ -42,13 +43,13 @@ function AdminDashboard() {
 }
 
 export default function App() {
+
+  useMetaPixel();
+  
   return (
     <> 
     <Routes>
-      {/* <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/products" element={<Products />} /> */}
+      
       
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
