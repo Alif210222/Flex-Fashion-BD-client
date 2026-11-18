@@ -1,27 +1,26 @@
 
 import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const MotionLink = motion(Link);
 
 const categories = [
-  {
-    name: "T-Shirts",
-    description: "Everyday essentials",
-    href: "/products?category=t-shirts",
+ {
+    name: "Drop Shoulder",
+    description: "Relaxed silhouettes",
+    href: "/products?subcategory=drop-shoulder",
   },
   {
     name: "Hoodies",
     description: "Relaxed comfort",
     href: "/products?category=hoodies",
   },
+  
   {
-    name: "Drop Shoulder",
-    description: "Relaxed silhouettes",
-    href: "/products?category=t-shirts&subcategory=drop-shoulder",
-  },
-  {
-    name: "Zackets",
+    name: "Sweatshirts",
     description: "Quality materials",
-    href: "/products?category=fabrics",
+    href: "/products?category=sweatshirts",
   },
 ];
 
@@ -48,21 +47,21 @@ export default function CategorySection() {
             </h2>
           </div>
 
-          <a
-            href="/products"
-            className="hidden items-center gap-2 border-b border-[#B8AE9D] pb-1 text-xs transition-colors hover:border-[#292821] sm:inline-flex"
+          <Link
+            to="/products"
+            className="hidden items-center gap-2 rounded-2xl border-2 border-[#0b0b0a] p-2 transition-colors hover:border-[#74715b] hover:bg-[#dfdfd8] sm:inline-flex"
           >
             All products
             <ArrowUpRight size={14} />
-          </a>
+          </Link>
         </motion.div>
 
         {/* Category Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
           {categories.map((category, index) => (
-            <motion.a
+            <MotionLink
               key={category.name}
-              href={category.href}
+              to={category.href}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
@@ -94,7 +93,7 @@ export default function CategorySection() {
 
                 {/* Category Information */}
                 <div>
-                  <h3 className="text-base font-semibold tracking-tight transition-colors duration-300 group-hover:text-[#817665] sm:text-lg">
+                  <h3 className="text-xl font-semibold tracking-tight transition-colors duration-300 group-hover:text-[#817665] sm:text-lg">
                     {category.name}
                   </h3>
 
@@ -102,19 +101,21 @@ export default function CategorySection() {
                     {category.description}
                   </p>
                 </div>
+
               </div>
-            </motion.a>
+            </MotionLink>
           ))}
         </div>
 
         {/* Mobile Browse Link */}
-        <a
-          href="/products"
-          className="mt-8 inline-flex items-center gap-2 border-b border-[#B8AE9D] pb-1 text-xs sm:hidden"
+        <Link
+          to="/products"
+          className="mt-8 inline-flex items-center gap-2 rounded-2xl border border-[#0b0b0a] p-2 text-xs text-[#292821] hover:bg-[#dfdfd8] sm:hidden"
         >
           Browse all products
           <ArrowUpRight size={14} />
-        </a>
+        </Link>
+
       </div>
     </section>
   );

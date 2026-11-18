@@ -17,6 +17,7 @@ import {
   CalendarDays,
   AlertCircle,
   ChevronDown,
+    Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
  import api from "../../services/api";
@@ -53,32 +54,7 @@ const getOrderStatus = (order) =>
 const getOrderNumber = (order) =>
   order?.orderNumber ?? order?.orderNo ?? order?._id ?? "—";
 
-// const getCustomer = (order) => {
-//   const address = order?.shippingAddress ?? {};
-//   const customer = order?.customer ?? order?.user ?? {};
 
-//   return {
-//     name:
-//       address.fullName ??
-//       customer.name ??
-//       order?.customerName ??
-//       "Customer",
-//     phone:
-//       address.phone ??
-//       customer.phone ??
-//       order?.phone ??
-//       "—",
-//     address: [
-//       address.addressLine,
-//       address.area,
-//       address.district,
-//       address.division,
-//     ]
-//       .filter(Boolean)
-//       .join(", "),
-//   };
-// };
-//----
 
 const getCustomer = (order) => {
   const shippingAddress = order?.shippingAddress ?? {};
@@ -110,6 +86,9 @@ const getCustomer = (order) => {
       "No delivery address available",
   };
 };
+
+
+
 
 
 const getItems = (order) =>
@@ -224,6 +203,7 @@ function OrderDetailsModal({
   order.paymentStatus ?? "unpaid"
 );
 
+
 //console.log(order);
 
   if (!order) return null;
@@ -234,15 +214,7 @@ function OrderDetailsModal({
   const items = getItems(order);
   const status = getOrderStatus(order);
 
-  // const subtotal = items.reduce(
-  //   (sum, item) => sum + getItemSubtotal(item),
-  //   0
-  // );
-
-  // const deliveryCharge = Number(
-  //   order.deliveryCharge ?? order.shippingCost ?? 0
-  //   // eslint-disable-next-line no-undef
-  // );
+ 
 
   const discount = Number(order.discount ?? 0);
 
@@ -535,6 +507,10 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
+
+
+
+
   const {
     data: orders = [],
     isLoading,
@@ -544,8 +520,13 @@ export default function AdminOrders() {
     isFetching,
   } = useQuery({
     queryKey: ["admin-orders"],
-    queryFn: async () => {
-      const response = await api.get("/orders/admin/all");
+    queryFn: async (params = {} ) => {
+      const response = await api.get("/orders/admin/all",{
+         params :{
+          ...params,
+          limit : 99,
+        }
+      });
       return getResponseOrders(response);
     },
   });
@@ -566,36 +547,7 @@ export default function AdminOrders() {
     enabled: Boolean(selectedOrderId),
   });
 
-  // const statusMutation = useMutation({
-  //   mutationFn: async ({ orderId, status }) => {
-  //     return api.patch(`/orders/admin/${orderId}/status`, {
-  //       orderStatus: status,
-  //     });
-  //   },
-
-  //   onSuccess: async (_, variables) => {
-  //     toast.success("Order status updated successfully");
-
-  //     await Promise.all([
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["admin-orders"],
-  //       }),
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["admin-order-details", variables.orderId],
-  //       }),
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["my-orders"],
-  //       }),
-  //     ]);
-  //   },
-
-  //   onError: (mutationError) => {
-  //     toast.error(
-  //       mutationError?.response?.data?.message ??
-  //         "Failed to update order status"
-  //     );
-  //   },
-  // });
+  
 
   const statusMutation = useMutation({
   mutationFn: async ({ orderId, status, paymentStatus }) => {
@@ -683,6 +635,56 @@ export default function AdminOrders() {
     paymentStatus,
   });
 };
+
+// delete order 
+const deleteOrderMutation = useMutation({
+  mutationFn: async (orderId) => {
+    return api.delete(`/orders/admin/${orderId}`);
+  },
+
+  onSuccess: async (_, deletedOrderId) => {
+    toast.success("Order deleted successfully");
+
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ["admin-orders"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["admin-order-details", deletedOrderId],
+      }),
+    ]);
+
+    if (selectedOrderId === deletedOrderId) {
+      setSelectedOrderId(null);
+    }
+  },
+
+  onError: (error) => {
+    toast.error(
+      error?.response?.data?.message ?? "Failed to delete order"
+    );
+  },
+});
+
+
+const handleDeleteOrder = (order) => {
+  const status = getOrderStatus(order);
+
+  // Only cancelled and delivered orders can be deleted
+  if (!["cancelled", "delivered"].includes(status)) {
+    toast.error("Only cancelled or delivered orders can be deleted");
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `Are you sure you want to permanently delete order ${getOrderNumber(order)}?`
+  );
+
+  if (!confirmed) return;
+
+  deleteOrderMutation.mutate(order._id);
+};
+
 
   return (
     <main className="min-h-screen bg-[#f7f3eb] px-4 py-8 text-[#292821] sm:px-6 lg:px-10">
@@ -904,6 +906,20 @@ export default function AdminOrders() {
                               <Eye size={15} />
                               Details
                             </button>
+
+                                 {/* Delete Button */}
+    {["cancelled", "delivered"].includes(status) && (
+      <button
+        type="button"
+        onClick={() => handleDeleteOrder(order)}
+        disabled={deleteOrderMutation.isPending}
+        className="inline-flex ml-2 items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <Trash2 size={15} />
+       
+      </button>
+    )}
+
                           </td>
                         </tr>
                       );
@@ -964,6 +980,20 @@ export default function AdminOrders() {
                           <Eye size={15} />
                           Details
                         </button>
+
+  {["cancelled", "delivered"].includes(status) && (
+    <button
+      type="button"
+      onClick={() => handleDeleteOrder(order)}
+      disabled={deleteOrderMutation.isPending}
+      className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <Trash2 size={15} />
+     
+    </button>
+  )}
+
+
                       </div>
                     </article>
                   );

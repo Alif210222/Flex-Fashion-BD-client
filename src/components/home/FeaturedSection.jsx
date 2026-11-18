@@ -81,7 +81,7 @@ export default function FeaturedProducts() {
 
           <Link
             to="/products"
-            className="hidden items-center gap-2 border-b border-[#B8AE9D] pb-1 text-xs transition-colors hover:border-[#292821] sm:inline-flex"
+            className="hidden items-center gap-2 border-2 p-2 rounded-xl border-[#0b0b0b] text-xs transition-colors hover:bg-[#c2bdbd] hover:border-[#82827d] sm:inline-flex"
           >
             View all
             <ArrowRight size={14} />
@@ -137,7 +137,7 @@ export default function FeaturedProducts() {
         <div className="mt-8 sm:hidden">
           <Link
             to="/products"
-            className="inline-flex items-center gap-2 border-b border-[#B8AE9D] pb-1 text-xs"
+            className="inline-flex items-center gap-2 border-1 p-2 border-[#141414]  rounded-xl hover:bg-[#d1cbcb] hover:border-[#9b9595]  text-xs"
           >
             View all products
             <ArrowRight size={14} />

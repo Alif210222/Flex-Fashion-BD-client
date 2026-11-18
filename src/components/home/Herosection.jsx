@@ -156,9 +156,7 @@ export default function HeroSection() {
             transition={{ duration: 0.7 }}
             className="order-2 flex flex-col items-center text-center md:order-1 md:items-start md:text-left"
           >
-            <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-[#817665] sm:mb-4 sm:text-[11px]">
-              Everyday essentials
-            </p>
+           
 
             <h1 className="max-w-md text-3xl font-medium leading-[1.12] tracking-tight sm:text-5xl lg:text-[3.8rem]">
               Made for your
@@ -166,14 +164,14 @@ export default function HeroSection() {
               everyday.
             </h1>
 
-            <p className="mt-4 max-w-sm text-xs leading-6 text-[#625e56] sm:mt-5 sm:text-sm sm:leading-7">
+            <p className="hidden mt-4 max-w-sm text-xs leading-6 text-[#625e56] sm:mt-5 sm:text-sm sm:leading-7">
               Explore comfortable T-shirts, hoodies and timeless
               essentials for your everyday wardrobe.
             </p>
 
             <a
               href="/products"
-              className="mt-6 inline-flex items-center justify-center gap-3 rounded-sm bg-[#9f998d] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#625E56] sm:mt-7 sm:py-3.5"
+              className="mt-6 inline-flex items-center justify-center gap-3 rounded-sm bg-[#f6f5f3] border-2 border-[#a39d90]  px-6 py-3  font-medium transition-colors hover:bg-[#aaa69f] sm:mt-7 sm:py-3.5"
             >
               Shop collection
               <ArrowRight size={15} />

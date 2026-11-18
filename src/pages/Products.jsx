@@ -18,12 +18,12 @@ import ProductCard from "../components/shared/ProductCard";
 
 const categories = [
   { id: "all", name: "All Products" },
-  { id: "t-shirts", name: "T-Shirts" },
+  { id: "t-shirts", name: "Drop Shoulder" },
   { id: "hoodies", name: "Hoodies" },
   { id: "sweatshirts", name: "Sweatshirts" },
   { id: "shirts", name: "Shirts" },
   { id: "fabrics", name: "Fabrics" },
-  { id: "drop-shoulder", name: "Drop Shoulder" },
+ 
   { id: "jackets", name: "Jackets" },
   { id: "others", name: "Others" },
 ];
@@ -188,26 +188,36 @@ export default function Products() {
     );
   }, [visibleProducts]);
 
-  // Scroll to a selected category when arriving via a category link.
-  useEffect(() => {
-    const subcategory = searchParams.get("subcategory");
-    const category = subcategory || searchParams.get("category");
+  
 
-    if (!category || category === "all") return;
+// Scroll to the selected category after products finish loading.
+useEffect(() => {
+  const subcategory = searchParams.get("subcategory");
+  const category = subcategory || searchParams.get("category");
 
-    const targetId = categories.some((item) => item.id === category)
-      ? category
-      : "all";
+  if (!category || category === "all") return;
 
-    const timeout = window.setTimeout(() => {
-      sectionRefs.current[targetId]?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 150);
+  // Wait until API data is loaded and category sections are rendered.
+  if (isLoading) return;
 
-    return () => window.clearTimeout(timeout);
-  }, [searchParams]);
+  const targetId = categories.some((item) => item.id === category)
+    ? category
+    : "all";
+
+  let frameId;
+
+  // Wait for the browser to complete rendering.
+  frameId = requestAnimationFrame(() => {
+    const targetSection = sectionRefs.current[targetId];
+
+    targetSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+
+  return () => cancelAnimationFrame(frameId);
+}, [searchParams, isLoading, products]);
 
   function selectCategory(categoryId) {
     const nextParams = new URLSearchParams(searchParams);
@@ -253,9 +263,7 @@ export default function Products() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[#817665] sm:text-xs">
-              The Flex-Fashion collection
-            </p>
+            
 
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
@@ -263,26 +271,26 @@ export default function Products() {
                   Shop all products
                 </h1>
 
-                <p className="mt-3 max-w-xl text-sm leading-6 text-[#817665]">
+                <p className="mt-3 max-w-xl text-sm leading-6 text-[#817665] hidden">
                   Find your everyday essentials, comfortable fits, and
                   timeless wardrobe pieces.
                 </p>
               </div>
 
-              <p className="text-xs text-[#817665]">
+              {/* <p className="text-xs text-[#817665]">
                 {isLoading
                   ? "Loading collection..."
                   : `${visibleProducts.length} ${
                       visibleProducts.length === 1 ? "product" : "products"
                     }`}
-              </p>
+              </p> */}
             </div>
           </motion.div>
 
           {/* Search bar */}
           <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row">
             <form
-              className="flex h-12 flex-1 items-center border border-[#D8CEBF] bg-[#FBF8F2] px-4 transition-colors focus-within:border-[#817665]"
+              className="flex h-12 flex-1 items-center border border-[#D8CEBF] rounded-xl  bg-[#FBF8F2] px-4 py-3 transition-colors focus-within:border-[#817665]"
               onSubmit={(event) => {
                 event.preventDefault();
                 sectionRefs.current[activeCategory]?.scrollIntoView({
@@ -315,7 +323,7 @@ export default function Products() {
               )}
             </form>
 
-            <label className="flex h-12 items-center gap-3 border border-[#D8CEBF] bg-[#FBF8F2] px-4 sm:w-56">
+            <label className="flex h-12 items-center gap-3 border border-[#D8CEBF] rounded-xl bg-[#FBF8F2] px-4 sm:w-56">
               <SlidersHorizontal size={16} className="text-[#817665]" />
 
               <span className="sr-only">Sort products</span>
